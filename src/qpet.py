@@ -875,12 +875,74 @@ class qpet:
                 if reward_url:
                     result = self.content_parser(self.protocol + reward_url[0], self.pattern_1)
                     print(result[1]) if len(result) > 1 else print(result)
-            
+
+    def predecessors(self):
+        paramsList = [
+            {
+                "name": "华藏寺",
+                "zapp_uin": "",
+                "sid": "",
+                "channel": 0,
+                "g_ut": 1,
+                "cmd": "sect_art"
+            }, {
+                "name": "伏虎寺",
+                "zapp_uin": "",
+                "sid": "",
+                "channel": 0,
+                "g_ut": 1,
+                "cmd": "sect_trump"
+            }, {
+                "name": "帮战",
+                "zapp_uin": "",
+                "B_UID": "0",
+                "sid": "",
+                "channel": 0,
+                "g_ut": 1,
+                "sub": 0,
+                "id": 5,
+                "cmd": "facwar",
+            }, {
+                "name": "贡献度",
+                "zapp_uin": "",
+                "sid": "0",
+                "channel": 0,
+                "g_ut": 1,
+                "cmd": "factionhr",
+                "subtype": 14,
+            }, {
+                "name": "要闻",
+                "zapp_uin": "",
+                "sid": "0",
+                "channel": 0,
+                "g_ut": 1,
+                "cmd": "factionop",
+                "subtype": 8,
+                "pageno": 1,
+                "type": 2
+            }, {
+                "name": "帮修",
+                "zapp_uin": "",
+                "sid": "0",
+                "channel": 0,
+                "g_ut": 1,
+                "cmd": "factiontrain",
+                "type": 1
+            }
+        ]
+        for item in paramsList:
+            print(item["name"])
+            del item["name"]
+            self.get_content(self.base_url + urlencode(item))
+            time.sleep(0.5)
+
     def main(self):
         print('----------玩家信息----------')
         player_info = self.get_player_info()
         print('\n'.join(player_info))
 
+        print("----------逛一逛----------")
+        self.predecessors()
         print('----------领取徒弟经验----------')
         self.exp()
         print('----------每日奖励----------')
