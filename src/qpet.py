@@ -517,7 +517,7 @@ class qpet:
             'channel': 0,
             'g_ut': 1,
             'cmd': 'recommendmanor',
-            'type': 6,
+            'type': 7,
             'page': 1
         }
         url = self.base_url + urlencode(params)
