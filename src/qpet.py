@@ -928,6 +928,16 @@ class qpet:
                 "g_ut": 1,
                 "cmd": "factiontrain",
                 "type": 1
+            }, {
+                "name": "贡献药水",
+                "zapp_uin": "",
+                "sid": "",
+                "channel": 0,
+                "g_ut": 1,
+                "cmd": "use",
+                "id": "3038",
+                "store_type": "0",
+                "page": "1"
             }
         ]
         for item in paramsList:
