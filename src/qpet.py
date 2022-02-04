@@ -592,7 +592,7 @@ class qpet:
             params['op'] = item
             url = self.base_url + urlencode(params)
             if item == 'challenge':
-                for i in range(5):
+                for i in range(7):
                     result = self.content_parser(url, self.pattern_1)
                     print(result[1]) if len(result) > 1 else print(result)
                     if any(item in str(result) for item in interrupt_signal):
