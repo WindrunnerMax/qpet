@@ -6,6 +6,11 @@ from lxml import etree
 from datetime import date
 import time
 import os
+from requests.adapters import HTTPAdapter
+
+session = requests.Session()
+session.mount("http://", HTTPAdapter(max_retries=3))
+session.mount("https://", HTTPAdapter(max_retries=3))
 
 class qpet:
 
@@ -21,7 +26,7 @@ class qpet:
 
     def get_content(self, url: str) -> ByteString:
         try:
-            resp = requests.get(url, proxies = self.proxies, headers = self.headers)
+            resp = session.get(url, proxies = self.proxies, headers = self.headers, timeout=3)
             if 200 == resp.status_code:
                 return resp.content
         except requests.ConnectionError:
