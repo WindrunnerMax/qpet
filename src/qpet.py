@@ -28,6 +28,9 @@ class qpet:
         try:
             resp = session.get(url, proxies = self.proxies, headers = self.headers, timeout=3)
             if 200 == resp.status_code:
+                if "系统繁忙" in resp.content.decode("utf-8"):
+                    print("系统繁忙 sleep 2")
+                    time.sleep(2)
                 return resp.content
         except requests.ConnectionError:
             raise ConnectionError
@@ -259,7 +262,7 @@ class qpet:
             params['cmd'] = item
             url = self.base_url + urlencode(params)
             if item == 'viewmem':
-                pattern = '//div[@id="id"]/a[contains(@href, "cmd=fight")][position()<5]/@href'
+                pattern = '//div[@id="id"]/a[contains(@href, "cmd=fight")][position()<6]/@href'
             friend_list = self.content_parser(url, pattern)
             for i in friend_list:
                 result = self.content_parser(self.protocol + i, self.pattern_1)
@@ -510,6 +513,7 @@ class qpet:
         }
         type_list = [7,1]
         for item in type_list:
+            time.sleep(3)
             params['type'] = item
             url = self.base_url + urlencode(params)
             result = self.content_parser(url, self.pattern_1)
@@ -649,6 +653,7 @@ class qpet:
 
     # 掠夺粮仓
     def forage_war(self):
+        time.sleep(3)
         params = {
             'B_UID': 0,
             'channel': 0,
