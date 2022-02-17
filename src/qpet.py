@@ -94,7 +94,7 @@ class qpet:
             'op': 'draw',
             'key': 'meridian'
         }
-        keys = ['meridian', 'login']
+        keys = ['meridian', 'login', "daren", "wuzitianshu"]
         for item in keys:
             params['key'] = item
             url = self.base_url + urlencode(params)
@@ -653,7 +653,7 @@ class qpet:
 
     # 掠夺粮仓
     def forage_war(self):
-        time.sleep(3)
+        time.sleep(6)
         params = {
             'B_UID': 0,
             'channel': 0,
