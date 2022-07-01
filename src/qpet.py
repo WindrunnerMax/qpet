@@ -526,7 +526,7 @@ class qpet:
             'channel': 0,
             'g_ut': 1,
             'cmd': 'recommendmanor',
-            'type': 7,
+            'type': 8,
             'page': 1
         }
         url = self.base_url + urlencode(params)
@@ -960,6 +960,10 @@ class qpet:
         print('----------玩家信息----------')
         player_info = self.get_player_info()
         print('\n'.join(player_info))
+
+        # print('----------掠夺----------')
+        # self.forage_war()
+        # exit(0)
 
         print("----------逛一逛----------")
         self.predecessors()
