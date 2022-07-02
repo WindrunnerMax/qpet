@@ -511,7 +511,7 @@ class qpet:
             'type': 7,
             'confirm': 1
         }
-        type_list = [7,1]
+        type_list = [11]
         for item in type_list:
             time.sleep(3)
             params['type'] = item
