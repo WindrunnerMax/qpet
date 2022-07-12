@@ -327,7 +327,7 @@ class qpet:
             'g_ut': 1,
             'cmd': 'abysstide',
             'op': 'enterabyss',
-            'id': 3
+            'id': 2
         }
         op_list = ['beginfight', 'endabyss']
         for num in range(2):
