@@ -149,7 +149,7 @@ class qpet:
             print(result[1]) if len(result) > 1 else print(result)
 
     # 武林大会
-    def martial_arts_conference(self) -> str:
+    def martial_arts_conference(self):
         params = {
             'B_UID': 0,
             'channel': 0,
@@ -162,7 +162,7 @@ class qpet:
         print(result[2]) if len(result) > 2 else print(result[1])
 
     # 武林盟主
-    def martial_lord(self) -> str:
+    def martial_lord(self):
         params = {
                 'B_UID': 0,
                 'channel': 0,
@@ -318,6 +318,34 @@ class qpet:
             if gang_list:
                 result = self.content_parser(self.protocol + random.choice(gang_list), self.pattern_1)
                 print(result[1]) if len(result) > 1 else print(result)
+
+    # 深渊之潮 
+    # params[id]: (1:崎岖斗界/2:魂渡桥/3:须臾之河/4:曲镜空洞/5:光影迷界/6:吞厄源头)
+    def abyssal_tide(self):
+        params = {
+            'channel': 0,
+            'g_ut': 1,
+            'cmd': 'abysstide',
+            'op': 'enterabyss',
+            'id': 3
+        }
+        op_list = ['beginfight', 'endabyss']
+        for num in range(2):
+            params['op'] = 'enterabyss'
+            url = self.base_url + urlencode(params)
+            self.content_parser(url, self.pattern_1)
+            for op in op_list:
+                params['op'] = op
+                url = self.base_url + urlencode(params)
+                if 'beginfight' == op:
+                    for i in range(5):
+                        result = self.content_parser(url, self.pattern_1)
+                        print(result[1]) if len(result) > 1 else print(result)
+                        if '憾负' in str(result):
+                            break
+                elif 'endabyss' == op:
+                    result = self.content_parser(url, self.pattern_1)
+                    print(result[1]) if len(result) > 1 else print(result)
 
     # 飞升大作战
     def ascend_heaven(self):
@@ -858,7 +886,10 @@ class qpet:
                         'cmd=newAct&subtype=43': '每日好礼步步升',
                         'cmd=newAct&subtype=57': '幸运大转盘',
                         'cmd=newAct&subtype=94': '活跃礼包',
-                        'cmd=menuact': '乐斗菜单'
+                        'cmd=menuact': '乐斗菜单',
+                        'cmd=oddeven': '猜单双',
+                        'cmd=weekgiftbag': '周周礼包'
+
         }
         url = self.base_url + urlencode(params)
         all_activity_url = self.content_parser(url, '//div[@id="id"]/p/a/@href')
@@ -880,6 +911,19 @@ class qpet:
                 if reward_url:
                     result = self.content_parser(self.protocol + reward_url[0], self.pattern_1)
                     print(result[4]) if len(result) > 4 else print(result)
+            elif 'cmd=oddeven' in url:
+                options = self.content_parser(self.protocol + url, '//div[@id="id"]/p/a[contains(@href, "value=1") or contains(@href, "value=2")]/@href')
+                if options:
+                    while True:
+                        result = self.content_parser(self.protocol + random.choice(options), self.pattern_1)
+                        print(result[1]) if len(result) > 1 else print(result)
+                        if '很遗憾，您猜错了' in str(result):
+                            break
+            elif 'cmd=weekgiftbag' in url:
+                reward_url = self.content_parser(self.protocol + url, '//div[@id="id"]/p/a[contains(@href, "sub=1")]/@href')
+                if reward_url:
+                    result = self.content_parser(self.protocol + reward_url[0], self.pattern_1)
+                    print(result[1]) if len(result) > 1 else print(result)
             else:
                 reward_url = self.content_parser(self.protocol + url, '//div[@id="id"]/p/a[contains(@href, "op=1")]/@href')
                 if reward_url:
@@ -991,6 +1035,8 @@ class qpet:
         self.warrior_inn()
         print('----------问鼎天下----------')
         self.resource_battle()
+        print('----------深渊之潮----------')
+        self.abyssal_tide()
         print('----------飞升大作战----------')
         self.ascend_heaven()
         print('----------梦想之旅----------')
