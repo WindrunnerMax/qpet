@@ -1,5 +1,6 @@
 from typing import ByteString, List
 import requests
+from requests.adapters import HTTPAdapter, Retry
 import random
 from urllib.parse import urlencode
 from lxml import etree
@@ -20,6 +21,10 @@ class qpet:
         self.proxies = proxies
         self.base_url = base_url
         self.pattern_1 = pattern_1
+        self.session = requests.Session()
+        retries = Retry(total = 3, backoff_factor = 0.3, status_forcelist = [500, 502, 503, 504])
+        self.session.mount('http://', HTTPAdapter(max_retries=retries))
+        self.session.mount('https://', HTTPAdapter(max_retries=retries))
 
         # 获取星期(一到日 -> 0到6)
         self.weekday = date.today().weekday()
@@ -101,6 +106,22 @@ class qpet:
             result = self.content_parser(url, self.pattern_1)
             print(result[1]) if len(result) > 1 else print(result)
 
+    # 大侠回归三重好礼
+    def return_gift(self):
+        params = {
+            'B_UID': 0,
+            'channel': 0,
+            'g_ut': 1,
+            'cmd': 'newAct',
+            'subtype': 173,
+            'op': 1
+        }
+        url = self.base_url + urlencode(params)
+        gift_urls = self.content_parser(url, '//div[@id="id"]/p/a[contains(@href, "op=2")]/@href')
+        for gift in gift_urls:
+            result = self.content_parser(self.protocol + gift, self.pattern_1)
+            print(result[1]) if len(result) > 1 else print(result)
+
     # 邪神秘宝
     def ten_lottery(self):
         params = {
@@ -159,7 +180,7 @@ class qpet:
         }
         url = self.base_url + urlencode(params)
         result = self.content_parser(url, self.pattern_1)
-        print(result[2]) if len(result) > 2 else print(result[1])
+        print(result[2]) if len(result) > 2 else print(result)
 
     # 武林盟主
     def martial_lord(self):
@@ -200,7 +221,7 @@ class qpet:
                 params['op'] = 'comfirm'
                 url = self.base_url + urlencode(params)
                 result = self.content_parser(url, self.pattern_1)
-                print(result[1]) if len(result) > 1 else print(result[1])
+                print(result[1]) if len(result) > 1 else print(result)
 
     # 巅峰之战
     def decisive_battle(self):
@@ -268,6 +289,8 @@ class qpet:
                 result = self.content_parser(self.protocol + i, self.pattern_1)
                 if item == 'viewmem':
                     print(result[2]) if len(result) > 2 else print(result)
+                elif item == 'friendlist':
+                    print(result[5]) if len(result) > 5 else print(result)
                 else:
                     print(result[3]) if len(result) > 3 else print(result)
                 if '体力值不足' in str(result):
@@ -366,11 +389,13 @@ class qpet:
             'channel': 0,
             'g_ut': 1,
             'cmd': 'dreamtrip',
-            'sub': 2
         }
         url = self.base_url + urlencode(params)
-        result = self.content_parser(url, self.pattern_1)
-        print(result[1]) if len(result) > 1 else print(result)
+        #sub: 2: 普通旅行/4: 领取奖励
+        actions = self.content_parser(url, '//div[@id="id"]/p/a[contains(@href, "sub=2") or contains(@href, "sub=4")]/@href')
+        for action in actions:
+            result = self.content_parser(self.protocol + action, self.pattern_1)
+            print(result[1]) if len(result) > 1 else print(result)
 
     # 帮派黄金联赛
     def faction_league(self):
@@ -398,9 +423,10 @@ class qpet:
         }
         url = self.base_url + urlencode(params)
         mountain_list = self.content_parser(url, '//div[@id="id"]/a[contains(@href, "op=visitimmortals")]/@href')
+        selected_mountains = []
         if mountain_list:
-            mountains = random.sample(mountain_list, 2)
-        for mountain in mountains:
+            selected_mountains = random.sample(mountain_list, 2)
+        for mountain in selected_mountains:
             # 选择寻访山脉
             self.content_parser(self.protocol + mountain, self.pattern_1)
             # fight
@@ -524,6 +550,8 @@ class qpet:
                 for i in range(5):
                     result = self.content_parser(url, self.pattern_1)
                     print(result[3]) if len(result) > 3 else print(result)
+                    if '挑战已结束' in str(result):
+                        break
             else:
                 params['box_id'] = 3
                 url = self.base_url + urlencode(params)
@@ -1015,6 +1043,8 @@ class qpet:
         self.exp()
         print('----------每日奖励----------')
         self.daily_gift()
+        print('----------大侠回归三重好礼----------')
+        self.return_gift()
         print('----------邪神秘宝----------')
         self.ten_lottery()
         print('----------帮派远征军----------')
