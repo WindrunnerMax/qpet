@@ -22,16 +22,15 @@ class qpet:
         self.base_url = base_url
         self.pattern_1 = pattern_1
         self.session = requests.Session()
-        retries = Retry(total = 3, backoff_factor = 0.3, status_forcelist = [500, 502, 503, 504])
+        retries = Retry(total=3, backoff_factor=0.3, status_forcelist=[500, 502, 503, 504])
         self.session.mount('http://', HTTPAdapter(max_retries=retries))
         self.session.mount('https://', HTTPAdapter(max_retries=retries))
-
         # 获取星期(一到日 -> 0到6)
         self.weekday = date.today().weekday()
 
     def get_content(self, url: str) -> ByteString:
         try:
-            resp = session.get(url, proxies = self.proxies, headers = self.headers, timeout=3)
+            resp = self.session.get(url, proxies = self.proxies, headers = self.headers)
             if 200 == resp.status_code:
                 if "系统繁忙" in resp.content.decode("utf-8"):
                     print("系统繁忙 sleep 2")
@@ -136,6 +135,21 @@ class qpet:
             result = self.content_parser(url, self.pattern_1)
             print(result[1]) if len(result) > 1 else print(result)
 
+    # 华山论剑
+    def knight_arena(self):
+        params = {
+            'channel': 0,
+            'g_ut': 1,
+            'cmd': 'knightarena',
+            'op': 'challenge'
+        }
+        url = self.base_url + urlencode(params)
+        for item in range(8):
+            result = self.content_parser(url, self.pattern_1)
+            print(result[1:3]) if len(result) > 2 else print(result)
+            if '门票不足' in str(result):
+                break
+            
     # 帮派远征军
     def faction_army(self):
         params = {
@@ -1047,6 +1061,8 @@ class qpet:
         self.return_gift()
         print('----------邪神秘宝----------')
         self.ten_lottery()
+        print('----------华山论剑----------')
+        self.knight_arena()
         print('----------帮派远征军----------')
         self.faction_army()
         print('----------任务派遣中心----------')
